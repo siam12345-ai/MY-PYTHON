@@ -2,26 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# DNA base
+# DNA structure
 t = np.linspace(0, 4*np.pi, 200)
 theta = np.linspace(0, 2*np.pi, 40)
 T, TH = np.meshgrid(t, theta)
 
-# Chakra system
-chakras = [
-    ("Root", 0.02, (1, 0, 0)),
-    ("Sacral", 0.03, (1, 0.5, 0)),
-    ("Solar", 0.04, (1, 1, 0)),
-    ("Heart", 0.05, (0, 1, 0)),
-    ("Throat", 0.06, (0, 0.5, 1)),
-    ("Third Eye", 0.07, (0.3, 0, 0.5)),
-    ("Crown", 0.08, (0.6, 0, 1))
-]
-
-# SELECT CHAKRA HERE
-chakra_index = 3   # try 0 to 6
-
-name, frequency, color = chakras[chakra_index]
+# USER CONTROL
+frequency = 0.06   # try: 0.02 , 0.04 , 0.08
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -44,10 +31,14 @@ def update(frame):
     Y = aura_radius * np.sin(TH)
     Z = T
 
-    # Aura
-    ax.plot_surface(X, Y, Z, color=color, alpha=0.3)
+    # Frequency → Color
+    glow = np.clip(frequency * 10, 0, 1)
+    aura_color = (glow, 0.4, 1 - glow)
 
-    # DNA
+    # Draw aura
+    ax.plot_surface(X, Y, Z, color=aura_color, alpha=0.3)
+
+    # Draw DNA
     ax.plot(x1, y1, z, color='white', linewidth=2)
     ax.plot(x2, y2, z, color='white', linewidth=2)
 
@@ -55,7 +46,10 @@ def update(frame):
     ax.set_ylim(-2, 2)
     ax.set_zlim(0, 4*np.pi)
 
-    ax.set_title(f"Active Chakra : {name}", color=color)
+    ax.set_title(
+        f"Frequency = {frequency}",
+        color=aura_color
+    )
 
 ani = FuncAnimation(fig, update, interval=50)
 plt.show()
